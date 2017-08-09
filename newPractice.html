@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style>
+  .styleTable{
+      font-weight: bold;
+  }
+  .col-12{
+	width:100%;
+	float:left;
+	position:relative;
+}
+.col-6{
+	width:50%;
+	float:left;
+	position:relative;
+}
+.col-2{
+	width:16.66%;
+	float:left;
+	position:relative;
+}
+  </style>
+</head>
+<body>
+<script>
+var current_page = 1;
+var records_per_page = 5;
+var objJson;
+/*var data = {};
+var result = [];*/
+$.getJSON("File1.json", function(result){
+ objJson = result.records;
+ changePage(1);
+ 
+})
+$(document).on("click", ".abc",function(e){	
+		var index = e.currentTarget;
+		showRecord(index);	 
+	});
+	
+	function showRecord(index){
+		//var record = result.records[index];
+		$("#lblCName").html(index.cells[0].innerText);
+		$("#lblCCity").html(index.cells[1].innerText);
+		$("#lblCCountry").html(index.cells[2].innerText);
+		$("#divCustomerListContainer").hide();
+		$("#divCustomerViewContainer").show();
+	
+	}
+	function back(){
+	 $("#divCustomerListContainer").show();
+	 $("#divCustomerViewContainer").hide();
+	}
+
+	
+function prevPage()
+{
+    if (current_page > 1) {
+        current_page--;
+        changePage(current_page);
+    }
+}
+
+function nextPage()
+{
+    if (current_page < numPages()) {
+        current_page++;
+        changePage(current_page);
+    }
+}
+    
+function changePage(page)
+{
+console.log("changePage");
+    var btn_next = document.getElementById("btn_next");
+    var btn_prev = document.getElementById("btn_prev");
+    var listing_table = document.getElementById("listingTable");
+    var page_span = document.getElementById("page");
+ 
+    // Validate page
+    if (page < 1) page = 1;
+    if (page > numPages()) page = numPages();
+
+    listing_table.innerHTML="<tr><td class='styleTable'>Name</td> <td class='styleTable'>City</td> <td class='styleTable'>Country</td></tr>";
+
+    for (var i = (page-1) * records_per_page; i < (page * records_per_page) && i < objJson.length; i++) {
+	
+        listing_table.innerHTML += "<tr class='abc'> <td><a href='javascript:void(0)'>"+objJson[i].Name+"</td> <td>"+objJson[i].City+"</td><td>"+objJson[i].Country+"</td><br></tr>";
+    }
+    page_span.innerHTML = page + "/" + numPages();
+
+    if (page == 1) {
+        btn_prev.style.visibility = "hidden";
+    } else {
+        btn_prev.style.visibility = "visible";
+    }
+
+    if (page == numPages()) {
+        btn_next.style.visibility = "hidden";
+    } else {
+        btn_next.style.visibility = "visible";
+    }
+}
+
+function numPages()
+{
+    return Math.ceil(objJson.length / records_per_page);
+}
+
+window.onload = function() {
+    //changePage(1);
+};
+</script>
+
+<div class="col-12 padLeft-5" id="divCustomerListContainer">
+<Table id="listingTable">
+</Table>
+<a href="javascript:prevPage()" id="btn_prev">Prev</a>
+<a href="javascript:nextPage()" id="btn_next">Next</a>
+page: <span id="page"></span>
+</div>
+<div id="divCustomerViewContainer" class="col-4" style="display:none; padding-left:5%; padding-top:5%">
+<div style="border:1px solid #ccc">
+	<div class="col-12 padLeft-5">
+		<label class="col-2" style="font-weight:bold">Name :</label>
+		<label class="col-6" style="font-weight:normal" id="lblCName"></label>
+	</div>
+	<div class="col-12 padLeft-5">
+		<label class="col-2" style="font-weight:bold">City :</label>
+		<label class="col-6" style="font-weight:normal" id="lblCCity"></label>
+	</div>
+	<div class="col-12 padLeft-5">
+		<label class="col-2" style="font-weight:bold">Country :</label>
+		<label class="col-6" style="font-weight:normal" id="lblCCountry"></label>
+	</div>
+	
+	<div class="col-12 padLeft-5">
+	<button type="button" onclick="back()">Back</button>
+	</div>
+	<div style="clear:both"></div>
+</div>
+</div>
+		
+</body>
+</html>
